@@ -9,6 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: update build file timestamps
+        run: |
+          echo "Updating build file timestamps"
+          touch bin/linux/*
+
       - uses: nylas/build-dpkg-buster@v1
         id: build
         with:
