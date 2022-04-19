@@ -9,10 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: update build file timestamps
+      - name: autogen.sh
         run: |
-          echo "Updating build file timestamps"
-          touch bin/linux/*
+          echo "Running autogen.sh in bin/linux"
+          cd bin/linux && ./autogen.sh
 
       - uses: nylas/build-dpkg-buster@v1
         id: build
