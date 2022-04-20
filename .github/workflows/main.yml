@@ -1,7 +1,9 @@
 on:
   push:
-    branches:
-      - release
+    tags:
+      - "adaptit-*"
+#    branches:
+#      - release
 
 jobs:
   build-deb:
@@ -14,12 +16,20 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           cd bin/linux && ./autogen.sh
 
-      - uses: nylas/build-dpkg-buster@v1
-        id: build
-        with:
-          args: --unsigned-source --unsigned-changes
+#      - uses: nylas/build-dpkg-buster@v1
+#        id: build
+#        with:
+#          args: --unsigned-source --unsigned-changes
+#
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: deb packages
+#          path: adaptit-*
 
-      - uses: actions/upload-artifact@v3
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: deb packages
-          path: adaptit-*
+          files: |
+            NEWS
+            ChangeLog
+            cloc-1.08.exe
