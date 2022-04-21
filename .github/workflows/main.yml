@@ -16,7 +16,7 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           cd bin/linux && ./autogen.sh
 
-      - uses: nylas/build-dpkg-buster@v1
+      - uses: kanaka/build-dpkg-focal@v1
         id: build
         with:
           args: --unsigned-source --unsigned-changes
@@ -25,6 +25,13 @@ jobs:
 #        with:
 #          name: deb packages
 #          path: adaptit-*
+
+      - name: debug-show-files
+        run: |
+          echo "Files named *.changes"
+          find . | grep "\.changes"
+          echo "Files changed in the last hour"
+          find . -mmin -60
 
       - name: Release
         uses: softprops/action-gh-release@v1
