@@ -6,7 +6,7 @@ on:
 #      - release
 
 jobs:
-  build-deb:
+  build-focal:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +29,7 @@ jobs:
       - name: debug-show-files
         run: |
           echo "Files named *.changes"
+          pwd
           find .. | grep "\.changes" || true
 
       - name: Release
@@ -36,5 +37,5 @@ jobs:
         with:
           files: |
             ChangeLog
-            ../adaptit_*
-            ../adaptit-*
+            ../artifacts/adaptit_*
+            ../artifacts/adaptit-*
