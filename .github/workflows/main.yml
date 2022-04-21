@@ -30,12 +30,13 @@ jobs:
         run: |
           echo "Files named *.changes"
           pwd
-          find .. | grep "\.changes" || true
+          find . | grep "\.changes" || true
+          find artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             ChangeLog
-            ../artifacts/adaptit_*
-            ../artifacts/adaptit-*
+            artifacts/adaptit_*
+            artifacts/adaptit-*
