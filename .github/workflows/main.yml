@@ -19,12 +19,8 @@ jobs:
       - uses: kanaka/build-dpkg-focal@v1
         id: build
         with:
+          LOCAL: focal
           args: --unsigned-source --unsigned-changes
-
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: deb packages
-#          path: adaptit-*
 
       - name: debug-show-files
         run: |
