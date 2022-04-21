@@ -29,9 +29,9 @@ jobs:
       - name: debug-show-files
         run: |
           echo "Files named *.changes"
-          find . | grep "\.changes"
+          find . | grep ".changes" || true
           echo "Files changed in the last hour"
-          find . -mmin -60
+          find . -mmin -60 || true
 
       - name: Release
         uses: softprops/action-gh-release@v1
