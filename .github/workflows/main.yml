@@ -11,7 +11,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distro: [focal, bionic]
+        include:
+          - distro: focal
+            uses: kanaka/build-dpkg@focal-v1
+          - distro: bionic
+            uses: kanaka/build-dpkg@bionic-v1
     steps:
       - uses: actions/checkout@v2
 
@@ -20,7 +24,7 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           cd bin/linux && ./autogen.sh
 
-      - uses: kanaka/build-dpkg@${{ matrix.distro }}-v1
+      - uses: ${{ matrix.uses }}
         id: build
         with:
           LOCAL: ${{ matrix.distro }}
