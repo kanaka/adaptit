@@ -1,3 +1,5 @@
+name: Build Deb (Ubuntu/Debian) packages
+
 on:
   push:
     tags:
