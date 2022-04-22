@@ -16,9 +16,10 @@ jobs:
           - {distro_short: 'bionic', distro_full: 'ubuntu:bionic'}
     steps:
       - uses: actions/checkout@v2
+        with: {path: adaptit}
 
       - name: build-docker-build-dpkg
-        run: docker build --build-arg DISTRO=${{ matrix.distro_full }} -t build-dpkg:${{ matrix.distro_short }} build-dpkg
+        run: docker build --build-arg DISTRO=${{ matrix.distro_full }} -t build-dpkg:${{ matrix.distro_short }} adaptit/build-dpkg
 
 #      - name: autogen.sh
 #        run: |
@@ -35,24 +36,24 @@ jobs:
       - name: autogen.sh
         run: |
           echo "Running autogen.sh in bin/linux"
-          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/bin/linux build-dpkg:${{ matrix.distro_short }} ./autogen.sh
+          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit/bin/linux build-dpkg:${{ matrix.distro_short }} ./autogen.sh
 
       - name: build-dkpg
         run: |
           echo "Doing package build"
-          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace -e LOCAL=${{ matrix.distro_short }} build-dpkg:${{ matrix.distro_short }} /build.sh -I.git -Iwin32_utils --unsigned-source --unsigned-changes
+          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit -e LOCAL=${{ matrix.distro_short }} build-dpkg:${{ matrix.distro_short }} /build.sh -I.git -Iwin32_utils --unsigned-source --unsigned-changes
 
       - name: debug-show-files
         run: |
           echo "Files named *.changes"
           pwd
-          find . | grep "\.changes" || true
-          find artifacts
+          find adaptit/ | grep "\.changes" || true
+          find adaptit/artifacts
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ChangeLog
-            artifacts/adaptit_*
-            artifacts/adaptit-*
+            adaptit/ChangeLog
+            adaptit/artifacts/adaptit_*
+            adaptit/artifacts/adaptit-*
