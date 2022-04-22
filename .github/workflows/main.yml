@@ -30,12 +30,12 @@ jobs:
 
       - id: build-focal
         uses: kanaka/build-dpkg@focal-v1
-        if: ${{ needs.distro_matrix.outputs.distro == 'focal' }}
+        if: ${{ needs.distro_matrix.outputs.matrix.distro == 'focal' }}
         with: {LOCAL: focal, args: --unsigned-source --unsigned-changes}
 
       - id: build-bionic
         uses: kanaka/build-dpkg@bionic-v1
-        if: ${{ needs.distro_matrix.outputs.distro == 'bionic' }}
+        if: ${{ needs.distro_matrix.outputs.matrix.distro == 'bionic' }}
         with: {LOCAL: bionic, args: --unsigned-source --unsigned-changes}
 
       - name: debug-show-files
