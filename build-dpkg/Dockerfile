@@ -1,5 +1,5 @@
-ARG DISTRO
-FROM ${DISTRO}
+ARG FROM
+FROM ${FROM}
 
 RUN if grep -qs eoan /etc/*release*; then \
       sed -i -re 's/([a-z]{2}.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list; \
