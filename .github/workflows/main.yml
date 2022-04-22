@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distro: ${{fromJson(needs.distro_matrix.outputs.matrix}}
+        distro: ${{ fromJson(needs.distro_matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v2
 
