@@ -2,39 +2,30 @@ on:
   push:
     tags:
       - "adaptit-*"
+  workflow_dispatch:
+    inputs:
+      releases:
+        description: 'Space separate list of Debian/Ubuntu releases'
+        required: true
+        default: 'all'
 
 jobs:
+  get-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+        with: {path: adaptit}
+      - id: get-matrix
+        run: cd adaptit && ./scripts/get-ci-matrix.sh ${{ github.event.inputs.impls }}
+
   build-dpkg:
+    needs: get-matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - distro: 'ubuntu'   # Ubuntu 14.04 LTS
-            release: 'trusty'
-
-          - distro: 'ubuntu'   # Ubuntu 16.04 LTS
-            release: 'xenial'
-
-          - distro: 'ubuntu'   # Ubuntu 18.04 LTS
-            release: 'bionic'
-            args: '--unsigned-source --unsigned-changes'
-
-          - distro: 'ubuntu'   # Ubuntu 19.10
-            release: 'eoan'
-            args: '--unsigned-source --unsigned-changes'
-
-          - distro: 'ubuntu'   # Ubuntu 20.04 LTS
-            release: 'focal'
-            args: '--unsigned-source --unsigned-changes'
-
-          - distro: 'ubuntu'   # Ubuntu 21.10
-            release: 'impish'
-            args: '--unsigned-source --unsigned-changes'
-
-          - distro: 'debian'   # Debian latest
-            release: 'sid'
-            args: '--unsigned-source --unsigned-changes'
+      matrix: ${{ fromJson(needs.get-matrix.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v2
@@ -48,17 +39,17 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit/bin/linux build-dpkg:${{ matrix.release }} ./autogen.sh
 
-      - name: build-dkpg
-        run: |
-          echo "Doing package build"
-          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit -e LOCAL=${{ matrix.release }} build-dpkg:${{ matrix.release }} /build.sh -I.git -Iwin32_utils ${{ matrix.args }}
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          # A release already has sources so skip dpkg created *.tar.gz.
-          files: |
-            adaptit/ChangeLog
-            adaptit/artifacts/*.dsc
-            adaptit/artifacts/*.deb
-            adaptit/artifacts/*.changes
+#      - name: build-dkpg
+#        run: |
+#          echo "Doing package build"
+#          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit -e LOCAL=${{ matrix.release }} build-dpkg:${{ matrix.release }} /build.sh -I.git -Iwin32_utils ${{ matrix.args }}
+#
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          # A release already has sources so skip dpkg created *.tar.gz.
+#          files: |
+#            adaptit/ChangeLog
+#            adaptit/artifacts/*.dsc
+#            adaptit/artifacts/*.deb
+#            adaptit/artifacts/*.changes
