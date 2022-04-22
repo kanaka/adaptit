@@ -17,7 +17,7 @@ jobs:
           #- {distro_short: 'bionic', distro_full: 'ubuntu:bionic'}  # 18.04 LTS
           - {distro_short: 'eoan',   distro_full: 'ubuntu:eoan'}    # 19.10
           #- {distro_short: 'focal',  distro_full: 'ubuntu:focal'}   # 20.04 LTS
-          - {distro_short: 'impish', distro_full: 'ubuntu:impish'}  # 21.10
+          #- {distro_short: 'impish', distro_full: 'ubuntu:impish'}  # 21.10
           - {distro_short: 'sid',    distro_full: 'debian:sid'}
     steps:
       - uses: actions/checkout@v2
