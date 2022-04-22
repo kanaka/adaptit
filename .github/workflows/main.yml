@@ -12,8 +12,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {distro_short: 'focal',  distro_full: 'ubuntu:focal'}
-          - {distro_short: 'bionic', distro_full: 'ubuntu:bionic'}
+          - {distro_short: 'trusty', distro_full: 'ubuntu:trusty'}  # 14.04 LTS
+          - {distro_short: 'xenial', distro_full: 'ubuntu:xenial'}  # 16.04 LTS
+          #- {distro_short: 'bionic', distro_full: 'ubuntu:bionic'}  # 18.04 LTS
+          - {distro_short: 'eoan',   distro_full: 'ubuntu:eoan'}    # 19.10
+          #- {distro_short: 'focal',  distro_full: 'ubuntu:focal'}   # 20.04 LTS
+          - {distro_short: 'impish', distro_full: 'ubuntu:impish'}  # 21.10
+          - {distro_short: 'sid',    distro_full: 'debian:sid'}
     steps:
       - uses: actions/checkout@v2
         with: {path: adaptit}
@@ -53,7 +58,9 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          # Skip dpkg created source *.tar.gz. Release already has it.
           files: |
             adaptit/ChangeLog
-            adaptit/artifacts/adaptit_*
-            adaptit/artifacts/adaptit-*
+            adaptit/artifacts/*.dsc
+            adaptit/artifacts/*.deb
+            adaptit/artifacts/*.changes
