@@ -20,11 +20,11 @@ jobs:
       - name: build-docker-build-dpkg
         run: docker build --build-arg DISTRO=${{ matrix.distro_full }} -t build-dpkg:${{ matrix.distro_short }} build-dpkg
 
-      - name: autogen.sh
-        run: |
-          echo "Running autogen.sh in bin/linux"
-          cd bin/linux && ./autogen.sh
-
+#      - name: autogen.sh
+#        run: |
+#          echo "Running autogen.sh in bin/linux"
+#          cd bin/linux && ./autogen.sh
+#
 #      - id: build-dpkg
 #        uses: kanaka/build-dpkg@multi-v1
 #        with:
@@ -32,8 +32,15 @@ jobs:
 #          args: --unsigned-source --unsigned-changes
 #          build-args: DISTRO=${{ matrix.distro_full }}
 
+      - name: autogen.sh
+        run: |
+          echo "Running autogen.sh in bin/linux"
+          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/bin/linux build-dpkg:${{ matrix.distro_short }} ./autogen.sh
+
       - name: build-dkpg
-        run: docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace build-dpkg:${{ matrix.distro_short }} --unsigned-source --unsigned-changes
+        run: |
+          echo "Doing package build"
+          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace build-dpkg:${{ matrix.distro_short }} /build.sh --unsigned-source --unsigned-changes
 
       - name: debug-show-files
         run: |
