@@ -6,20 +6,14 @@ on:
 #      - release
 
 jobs:
-  distro_matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - id: set-matrix
-        run: |
-          echo "::set-output name=matrix::{\"distro\":[\"focal\",\"bionic\"]}"
   build-dpkg:
-    needs: distro_matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.distro_matrix.outputs.matrix) }}
+      matrix:
+        include:
+          - {distro_short: 'focal',  distro_full: 'ubuntu:focal'}
+          - {distro_short: 'bionic', distro_full: 'ubuntu:bionic'}
     steps:
       - uses: actions/checkout@v2
 
@@ -28,15 +22,12 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           cd bin/linux && ./autogen.sh
 
-      - id: build-focal
-        uses: kanaka/build-dpkg@focal-v1
-        if: ${{ needs.distro_matrix.outputs.matrix.distro == 'focal' }}
-        with: {LOCAL: focal, args: --unsigned-source --unsigned-changes}
-
-      - id: build-bionic
-        uses: kanaka/build-dpkg@bionic-v1
-        if: ${{ needs.distro_matrix.outputs.matrix.distro == 'bionic' }}
-        with: {LOCAL: bionic, args: --unsigned-source --unsigned-changes}
+      - id: build-dpkg
+        uses: kanaka/build-dpkg@multi-v1
+        with:
+          LOCAL: ${{ matrix.distro_short }}
+          args: --unsigned-source --unsigned-changes
+          build-args: DISTRO=${{ matrix.distro_full }}
 
       - name: debug-show-files
         run: |
