@@ -40,7 +40,7 @@ jobs:
       - name: build-dkpg
         run: |
           echo "Doing package build"
-          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace build-dpkg:${{ matrix.distro_short }} -e LOCAL=${{ matrix.distro_short }} /build.sh -I .git -I win32_utils --unsigned-source --unsigned-changes
+          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace -e LOCAL=${{ matrix.distro_short }} build-dpkg:${{ matrix.distro_short }} /build.sh -I .git -I win32_utils --unsigned-source --unsigned-changes
 
       - name: debug-show-files
         run: |
