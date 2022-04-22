@@ -6,8 +6,12 @@ on:
 #      - release
 
 jobs:
-  build-focal:
+  build-dpkg:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [focal, bionic]
     steps:
       - uses: actions/checkout@v2
 
@@ -16,10 +20,10 @@ jobs:
           echo "Running autogen.sh in bin/linux"
           cd bin/linux && ./autogen.sh
 
-      - uses: kanaka/build-dpkg-focal@v1
+      - uses: kanaka/build-dpkg@${{ matrix.distro }}-v1
         id: build
         with:
-          LOCAL: focal
+          LOCAL: ${{ matrix.distro }}
           args: --unsigned-source --unsigned-changes
 
       - name: debug-show-files
