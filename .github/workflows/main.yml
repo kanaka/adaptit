@@ -6,12 +6,20 @@ on:
 #      - release
 
 jobs:
+  distro_matrix:
+    runs-on: ubuntu-latest
+    outputs: {matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::{\"distro\":[\"focal\",\"bionic\"]}"
   build-dpkg:
+    needs: distro_matrix
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        distro: [focal, bionic]
+        distro: ${{fromJson(needs.distro_matrix.outputs.matrix}}
     steps:
       - uses: actions/checkout@v2
 
@@ -22,12 +30,12 @@ jobs:
 
       - id: build-focal
         uses: kanaka/build-dpkg@focal-v1
-        if: ${{ matrix.distro == "focal" }}
+        if: ${{ needs.distro_matrix.outputs.distro == 'focal' }}
         with: {LOCAL: focal, args: --unsigned-source --unsigned-changes}
 
       - id: build-bionic
         uses: kanaka/build-dpkg@bionic-v1
-        if: ${{ matrix.distro == "bionic" }}
+        if: ${{ needs.distro_matrix.outputs.distro == 'bionic' }}
         with: {LOCAL: bionic, args: --unsigned-source --unsigned-changes}
 
       - name: debug-show-files
