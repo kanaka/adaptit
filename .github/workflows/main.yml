@@ -45,13 +45,14 @@ jobs:
 #        run: |
 #          echo "Doing package build"
 #          docker run --rm -v $(pwd):/github/workspace --workdir /github/workspace/adaptit -e LOCAL=${{ matrix.release }} build-dpkg:${{ matrix.release }} /build.sh -I.git -Iwin32_utils ${{ matrix.args }}
-#
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          # A release already has sources so skip dpkg created *.tar.gz.
-#          files: |
-#            adaptit/ChangeLog
-#            adaptit/artifacts/*.dsc
-#            adaptit/artifacts/*.deb
-#            adaptit/artifacts/*.changes
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # A release already has sources so skip dpkg created *.tar.gz.
+          files: |
+            adaptit/ChangeLog
+            adaptit/artifacts/*.dsc
+            adaptit/artifacts/*.deb
+            adaptit/artifacts/*.changes
